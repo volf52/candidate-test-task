@@ -9,6 +9,8 @@ Some transactions are listed on one row, some on two or more. It's your job to d
 the two provided example csv files which represenets two real files from two different crypto exchanges. How a transaction is read
 isn't always obvious and how well you figure this out is part of the assesment in the test.
 
+Note that the amounts and values are made up and does not reflect actual currency values of the dates they were made.
+
 
 ### Input
 The `CSVParser` class takes a path to a csv_file as input.
@@ -26,8 +28,7 @@ that is parsed, the expected output should be as the below for each of the trans
 using the `print_results()` method in the `CSVParser` class found in `main.py`. Note that there are three different transaction types and how they differ in their output formatt below.
 
 
-Example output:
-
+#### Example output:
 
 **Trade**:
 
@@ -70,6 +71,14 @@ Example output:
  }
 
 ```
+
+#### Transaction types
+
+`transaction_type` is a text string and must be one of these three in the output:
+
+1. `Trade` - One currency is traded for another currency
+2. `Deposit` - An increase of crypto
+3. `Withdrawal` - A decrease of crypto
 
 
 ### What we asses in your code test:

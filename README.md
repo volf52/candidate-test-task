@@ -11,7 +11,7 @@ Some transactions are listed on one row, some on two or more. It's your job to b
 
 
 ### Requirements
-- You must use Python
+- You must use Python 3.x
 - You must use the `pandas` library to parse the csv files
 - Follow pythons PEP 8 style guide
 
@@ -24,7 +24,7 @@ Example output:
 
 **Trade**:
 
- ```json
+ ```javascript
  {
      'date':'YYYY-mm-dd HH:mm',
      'transaction_type':'Trade',

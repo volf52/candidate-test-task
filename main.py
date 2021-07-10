@@ -8,6 +8,18 @@ EXCHANGE1_COLS = {"TRANSACTION_ID", "TYPE", "DATE", "AMOUNT", "CURRENCY"}
 EXCHANGE2_COLS = {"TYPE", "TIME", "SOLD AMOUNT", "BOUGHT AMOUNT", "CURRENCIES"}
 
 
+class UnrecognizedExchangeError(ValueError):
+    def __init__(self):
+        super(UnrecognizedExchangeError, self).__init__(f"Unrecognized Exchange")
+
+
+class UnrecognizedTransactionTypeError(ValueError):
+    def __init__(self, type: str):
+        super(UnrecognizedTransactionTypeError, self).__init__(
+            f"Unrecognized Transaction Type: {type}"
+        )
+
+
 class CSVParser:
     """
     A class responsible for reading and parsing csv files from the
@@ -34,7 +46,7 @@ class CSVParser:
             elif row["TYPE"] in {"TRADE", "BUY", "SELL"}:
                 transaction = self.process_trade(row, exchange_type)
             else:
-                raise ValueError(f"Unrecognized transaction type {row['TYPE']}")
+                raise UnrecognizedTransactionTypeError(row["TYPE"])
 
             transaction["date"] = row["DATETIME"]
             self.transactions.append(transaction)
@@ -64,7 +76,7 @@ class CSVParser:
 
             exchange_type = 2
         else:
-            raise ValueError("Unrecognized Exchange Type")
+            raise UnrecognizedExchangeError
 
         df["DATETIME"] = pd.to_datetime(df["DATETIME"]).dt.strftime("%Y-%m-%d %H:%M")
 
@@ -85,7 +97,7 @@ class CSVParser:
         elif exchange_type == 2:
             col = "BOUGHT AMOUNT"
         else:
-            raise ValueError("Unrecognized Exchange Type")
+            raise UnrecognizedExchangeError
 
         transaction["received_amount"] = row[col]
 
@@ -105,7 +117,7 @@ class CSVParser:
         elif exchange_type == 2:
             amount = row["SOLD AMOUNT"]
         else:
-            raise ValueError("Unrecognized Exchange Type")
+            raise UnrecognizedExchangeError
 
         transaction["sent_amount"] = amount
 
@@ -116,6 +128,17 @@ class CSVParser:
         transaction = {
             "transaction_type": "Trade",
         }
+
+        type = row["TYPE"]
+
+        if type == "TRADE":
+            pass
+        elif type == "BUY":
+            pass
+        elif type == "SELL":
+            pass
+        else:
+            raise UnrecognizedTransactionTypeError(type)
 
         return transaction
 

@@ -65,6 +65,7 @@ class CSVParser:
 
             df.rename(columns={"DATE": "DATETIME"}, inplace=True)
             df.drop(columns=["TRANSACTION_ID"], inplace=True)
+
             exchange_type = 1
         elif cols == EXCHANGE2_COLS:
             df["SOLD AMOUNT"] = df["SOLD AMOUNT"].fillna(0).astype(float)
@@ -129,16 +130,32 @@ class CSVParser:
             "transaction_type": "Trade",
         }
 
-        trans_type = row["TYPE"]
+        if exchange_type == 1:
+            amount = row["AMOUNT"]
+            currency = row["CURRENCY"]
+            other_currency = list({"BTC", "USD"} - {currency})[0]
 
-        if trans_type == "TRADE":
-            pass
-        elif trans_type == "BUY":
-            pass
-        elif trans_type == "SELL":
-            pass
+            if amount < 0:
+                transaction["sent_amount"] = -amount
+                transaction["sent_currency_iso"] = currency
+                transaction["received_amount"] = None
+                transaction["received_currency_iso"] = other_currency
+            else:
+                transaction["sent_amount"] = None
+                transaction["sent_currency_iso"] = other_currency
+                transaction["received_amount"] = amount
+                transaction["received_currency_iso"] = currency
+
+        elif exchange_type == 2:
+            transaction["received_amount"] = row["BOUGHT AMOUNT"]
+            transaction["sent_amount"] = row["SOLD AMOUNT"]
+
+            (
+                transaction["sent_currency_iso"],
+                transaction["received_currency_iso"],
+            ) = row["CURRENCY"].split("-to-")
         else:
-            raise UnrecognizedTransactionTypeError(trans_type)
+            raise UnrecognizedExchangeError
 
         return transaction
 
@@ -153,11 +170,11 @@ if __name__ == "__main__":
     root = Path("exchange_files")
 
     file1 = root / "exchange_1_transaction_file.csv"
-    file2 = root / "exchange_2_transaction_file.csv"
-
     parser = CSVParser(file1)
     parser.print_results()
 
     print("=" * 79)
+
+    file2 = root / "exchange_2_transaction_file.csv"
     parser = CSVParser(file2)
     parser.print_results()

@@ -14,9 +14,9 @@ class UnrecognizedExchangeError(ValueError):
 
 
 class UnrecognizedTransactionTypeError(ValueError):
-    def __init__(self, type: str):
+    def __init__(self, trans_type: str):
         super(UnrecognizedTransactionTypeError, self).__init__(
-            f"Unrecognized Transaction Type: {type}"
+            f"Unrecognized Transaction Type: {trans_type}"
         )
 
 
@@ -129,16 +129,16 @@ class CSVParser:
             "transaction_type": "Trade",
         }
 
-        type = row["TYPE"]
+        trans_type = row["TYPE"]
 
-        if type == "TRADE":
+        if trans_type == "TRADE":
             pass
-        elif type == "BUY":
+        elif trans_type == "BUY":
             pass
-        elif type == "SELL":
+        elif trans_type == "SELL":
             pass
         else:
-            raise UnrecognizedTransactionTypeError(type)
+            raise UnrecognizedTransactionTypeError(trans_type)
 
         return transaction
 
